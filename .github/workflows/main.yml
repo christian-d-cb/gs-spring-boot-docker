@@ -25,9 +25,24 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      
+      - uses: azure/docker-login@v1
+        with:
+          login-server: cddockertest.azurecr.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
           
       - name: Maven Package
         run:  cd complete/ && mvn clean package && mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
         
       - name: Docker Build
-        run: cd complete/ && docker build -t christian-durbin-cb/gs-spring-boot-docker .
+        run: |
+          cd complete/
+          docker build . -t cddockertest.azurecr.io/gs-spring-boot-docker::${{ github.sha }}
+          docker push cddockertest.azurecr.io/gs-spring-boot-docker::${{ github.sha }}
+        
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'tf-test-webapp'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: 'cddockertest.azurecr.io/gs-spring-boot-docker::${{ github.sha }}'
