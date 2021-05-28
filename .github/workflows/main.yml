@@ -25,12 +25,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
-      - name: Sets directory
-        run: cd complete/ && ls
           
       - name: Maven Package
-        run: mvn clean package
+        run:  cd complete/ && mvn clean package
         
       - name: Docker Build
-        run: docker build -t christian-durbin-cb/gs-spring-boot-docker .
+        run: cd complete/ && docker build -t christian-durbin-cb/gs-spring-boot-docker .
