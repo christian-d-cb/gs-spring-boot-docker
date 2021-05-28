@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
           
       - name: Maven Package
-        run:  cd complete/ && mvn clean package
+        run:  cd complete/ && mvn clean package && mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
         
       - name: Docker Build
         run: cd complete/ && docker build -t christian-durbin-cb/gs-spring-boot-docker .
