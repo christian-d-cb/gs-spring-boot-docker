@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Sets directory
-        run: cd complete/
+        run: cd complete/ && ls
           
       - name: Maven Package
         run: mvn clean package
